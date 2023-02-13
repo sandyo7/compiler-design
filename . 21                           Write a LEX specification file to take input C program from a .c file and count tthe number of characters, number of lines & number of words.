@@ -1,0 +1,65 @@
+%{
+int nchar, nword, nline;
+%}
+%%
+\n { nline++; nchar++; }
+[^ \t\n]+ { nword++, nchar += yyleng; }
+. { nchar++; }
+%%
+int yywrap(void) {
+return 1;
+}
+int main(int argc, char *argv[]) {
+yyin = fopen(argv[1], "r");
+yylex();
+printf("Number of characters = %d\n", nchar);
+printf("Number of words = %d\n", nword);
+printf("Number of lines = %d\n", nline);
+fclose(yyin);
+}
+
+Output:
+G:\lex>flex count_line.l
+
+G:\lex>gcc lex.yy.c
+
+G:\lex>a.exe sample.c
+Number of characters = 233
+Number of words = 33
+Number of lines = 10
+
+G:\lex>
+
+Exp. No. 22                          
+Write a LEX program to print all the constants in the given C source program file.
+Input Source Program: (sample.c)
+#define P 314  
+#include<stdio.h> #include<conio.h>
+ void main()
+{
+            int a,b,c = 30;
+printf("hello");
+}
+Program: (countconstants.l)
+digit [0-9]
+%{
+int cons=0;
+%}
+%%
+{digit}+ { cons++; printf("%s is a constant\n", yytext);  }
+.|\n { }
+%%
+int yywrap(void) {
+return 1; }
+int main(void)
+{
+FILE *f;
+char file[10];
+printf("Enter File Name : ");
+scanf("%s",file);
+f = fopen(file,"r");
+yyin = f;
+yylex();
+printf("Number of Constants : %d\n", cons);
+fclose(yyin);  
+}
